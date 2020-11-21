@@ -10,6 +10,8 @@ API for CRUD users-resource
 ### Install project
 ```
 $ git clone https://github.com/TimmyMT/users-api.git
+$ cd users-api
+$ bundle install
 ```
 
 ### Create database
