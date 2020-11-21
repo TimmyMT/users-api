@@ -8,10 +8,15 @@ API for CRUD users-resource
 * PostgreSQL
 
 ### Install project
-bla-bla-bla
+```
+$ git clone https://github.com/TimmyMT/users-api.git
+```
 
 ### Create database
-bla-bla-bla
+```
+$ bundle exec rails db:create
+$ bundle exec rails db:migrate
+```
 
 ### Run tests
 ```
