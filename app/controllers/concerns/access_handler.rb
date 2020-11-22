@@ -5,7 +5,7 @@ module AccessHandler
   include TokensCoder
 
   def access_authorize
-    return false unless token_exist?
+    return render_unauthorized unless token_exist?
 
     receive_token
   end
@@ -25,9 +25,14 @@ module AccessHandler
     false
   end
 
+  def render_unauthorized
+    render json: { error: 'Access denied' }, status: :unauthorized
+  end
+
   private
 
   def token_exist?
+    return false if request.env["HTTP_AUTHORIZATION"].nil?
     return false unless request.env["HTTP_AUTHORIZATION"].include?('Bearer')
     return false if request.env["HTTP_AUTHORIZATION"] == ('Bearer' || 'Bearer ')
 
@@ -37,7 +42,11 @@ module AccessHandler
   def receive_token
     input = request.env["HTTP_AUTHORIZATION"]
     @token = input.split(' ').last
-    receive_decoded_token
+    finded_token = AccessToken.find_by(token: @token)
+
+    if finded_token&.expires_in > DateTime.now
+      receive_decoded_token
+    end
   end
 
   def receive_decoded_token

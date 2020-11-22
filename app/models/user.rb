@@ -8,4 +8,6 @@ class User < ApplicationRecord
          :validatable
 
   has_many :access_tokens
+
+  validates :first_name, presence: true
 end

@@ -59,10 +59,6 @@ module Api
 
       private
 
-      def render_unauthorized
-        render json: { error: 'Access denied' }, status: :unauthorized
-      end
-
       def render_not_found
         render json: { error: 'Record is not exist' }, status: :not_found
       end

@@ -11,11 +11,14 @@ class TokensCreator
   end
 
   def call
-    user.access_tokens.create(
-      user: user,
-      token: encode(payload),
-      expires_in: DateTime.now + 30.minutes
-    )
+    user.transaction do
+      user.access_tokens.destroy_all
+      user.access_tokens.create(
+        user: user,
+        token: encode(payload),
+        expires_in: DateTime.now + 30.minutes
+      )
+    end
   end
 
   private
