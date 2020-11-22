@@ -3,11 +3,12 @@
 module Api
   module V1
     class UsersController < ApplicationController
-      skip_before_action :verify_authenticity_token
+      include AccessHandler
       
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
 
       before_action :set_user, only: [:show, :update, :destroy]
+      before_action :access_authorize, only: :update
 
       def index
         @users = User.all.order(created_at: :desc)
@@ -36,28 +37,41 @@ module Api
       end
 
       def update
-        @user.update(params_permit)
+        if can_write?(@user)
+          @user.update(params_permit)
 
-        render json: @user, status: :ok
+          render json: @user, status: :ok
+        else
+          render_unauthorized
+        end
       end
 
       def destroy
-        @user.destroy
+        if can_delete?(@user)
+          @user.destroy
 
-        render json: @user, status: :no_content
+          render json: @user, status: :no_content
+        else
+          render_unauthorized
+        end
+        
       end
 
       private
+
+      def render_unauthorized
+        render json: { error: 'Access denied' }, status: :unauthorized
+      end
+
+      def render_not_found
+        render json: { error: 'Record is not exist' }, status: :not_found
+      end
 
       def passwords_valid?
         return false if params_permit[:password_confirmation].blank?
         return false if params_permit[:password].blank?
 
         params_permit[:password_confirmation] == params_permit[:password]
-      end
-
-      def render_not_found
-        render json: { error: 'Record is not exist' }, status: :not_found
       end
 
       def set_user

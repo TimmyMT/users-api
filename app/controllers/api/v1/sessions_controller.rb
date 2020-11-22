@@ -3,11 +3,23 @@
 module Api
   module V1
     class SessionsController < ApplicationController
-      
       def create
-        binding.pry
+        user = User.find_by(email: params_permit[:email])
+
+        if user&.valid_password?(params_permit[:password])
+          token = TokensCreator.new(user).call
+
+          render json: token, status: :created
+        else
+          render json: { error: 'Something went wrong. Access denied' }, status: :unauthorized
+        end
       end
 
+      private
+
+      def params_permit
+        params.require(:user).permit(:email, :password)
+      end
     end
   end
 end
