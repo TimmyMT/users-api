@@ -13,7 +13,6 @@ gem 'puma', '~> 4.1'
 gem 'rack-cors'
 gem 'rails', '~> 6.0.3', '>= 6.0.3.4'
 
-gem 'jbuilder', '~> 2.7'
 gem 'jwt'
 gem 'letter_opener', '~> 1.7.0'
 gem 'slim-rails', '~> 3.2'

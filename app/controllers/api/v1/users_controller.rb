@@ -22,12 +22,13 @@ module Api
       def create
         @user = User.new(params_permit)
 
-        if @user.valid?
+        if @user.valid? && passwords_valid?
           @user.save
 
           render json: @user, status: :created
         else
           errors = []
+          errors << 'Invalid passwords' unless passwords_valid?
           @user.errors.full_messages.each { |error| errors << error }
 
           render json: { errors: errors }, status: :bad_request
@@ -48,6 +49,13 @@ module Api
 
       private
 
+      def passwords_valid?
+        return false if params_permit[:password_confirmation].blank?
+        return false if params_permit[:password].blank?
+
+        params_permit[:password_confirmation] == params_permit[:password]
+      end
+
       def render_not_found
         render json: { error: 'Record is not exist' }, status: :not_found
       end
@@ -57,7 +65,7 @@ module Api
       end
 
       def params_permit
-        params.require(:user).permit(:email, :password, :first_name)
+        params.require(:user).permit(:email, :password, :password_confirmation, :first_name)
       end
     end
   end

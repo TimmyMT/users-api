@@ -7,5 +7,5 @@ class User < ApplicationRecord
          :rememberable,
          :validatable
 
-  
+  has_many :access_tokens
 end
