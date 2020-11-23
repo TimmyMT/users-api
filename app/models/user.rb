@@ -7,7 +7,7 @@ class User < ApplicationRecord
          :rememberable,
          :validatable
 
-  has_many :access_tokens
+  has_many :access_tokens, dependent: :destroy
 
   validates :first_name, presence: true
 end

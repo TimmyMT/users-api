@@ -15,6 +15,15 @@ FactoryBot.define do
     end
   end
 
+  factory :user_update_params, class: Hash do
+    initialize_with do
+      {
+        first_name: 'Updated name',
+        email: 'updated_email@mail.com'
+      }
+    end
+  end
+
   factory :user_sign_up_params, class: Hash do
     initialize_with do
       {

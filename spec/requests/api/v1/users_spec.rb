@@ -85,12 +85,12 @@ RSpec.describe Api::V1::UsersController, type: :request do
 
   describe 'PATCH #update' do
     let!(:user) { users.first }
-    let!(:update_params) { build(:user_params) }
-
-    subject { patch "#{base_url}/#{user.id}", user: update_params } 
+    let!(:update_params) { build(:user_update_params) }
 
     context 'when guest tries to update user info' do
-      before { subject }
+      before do
+        patch "#{base_url}/#{user.id}", user: update_params
+      end
 
       it 'return status unauthorized' do
         expect(last_response.status).to eq 401
@@ -100,16 +100,33 @@ RSpec.describe Api::V1::UsersController, type: :request do
         expect(json['error']).to eq 'Access denied'
       end
     end
+
+    context 'when admin tries to update user' do
+      let!(:admin) { create(:user, admin: true) }
+      let!(:admin_token) { TokensCreator.new(admin).call }
+
+      before do
+        patch "#{base_url}/#{user.id}", { user: update_params },
+        { "HTTP_AUTHORIZATION" => "Bearer #{admin_token.token}" }
+      end
+
+      it 'return status unauthorized' do
+        expect(last_response.status).to eq 200
+      end
+
+      it 'return updated user info' do
+        expect(json['first_name']).to eq 'Updated name'
+      end
+    end
   end
 
   describe 'DELETE #destroy' do
-    let!(:user) { users.first }
+    let!(:admin) { create(:user, admin: true) }
+    let!(:user) { create(:user) }
     let!(:update_params) { build(:user_params) }
 
-    subject { delete "#{base_url}/#{user.id}" } 
-
-    context 'when guest tries to update user info' do
-      before { subject }
+    context 'when guest tries to delete user' do
+      before { delete "#{base_url}/#{user.id}" }
 
       it 'return status unauthorized' do
         expect(last_response.status).to eq 401
@@ -117,6 +134,18 @@ RSpec.describe Api::V1::UsersController, type: :request do
 
       it 'return error message' do
         expect(json['error']).to eq 'Access denied'
+      end
+    end
+
+    context 'when admin tries to delete user' do
+      let!(:admin_token) { TokensCreator.new(admin).call }
+
+      before do
+        delete "#{base_url}/#{user.id}", {}, { "HTTP_AUTHORIZATION" => "Bearer #{admin_token.token}" }
+      end
+
+      it 'return status unauthorized' do
+        expect(last_response.status).to eq 204
       end
     end
   end

@@ -8,7 +8,7 @@ module Api
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
 
       before_action :set_user, only: [:show, :update, :destroy]
-      before_action :access_authorize, only: :update
+      before_action :access_authorize, only: [:update, :destroy]
 
       def index
         @users = User.all.order(created_at: :desc)
@@ -50,11 +50,10 @@ module Api
         if can_delete?(@user)
           @user.destroy
 
-          render json: @user, status: :no_content
+          render json: { message: 'User deleted!' }, status: :no_content
         else
           render_unauthorized
         end
-        
       end
 
       private
