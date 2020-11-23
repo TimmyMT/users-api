@@ -1,3 +1,3 @@
 class AccessTokenSerializer < ActiveModel::Serializer
-  attributes :token
+  attributes :token, :expires_in
 end
