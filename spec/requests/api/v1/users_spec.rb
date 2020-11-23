@@ -81,6 +81,24 @@ RSpec.describe Api::V1::UsersController, type: :request do
         expect(json['first_name']).to eq users.first.first_name
       end
     end
+
+    context 'when tries to get not existed user' do
+      let!(:deleted_user) { create(:user) }
+      let!(:deleted_user_id) { deleted_user.id }
+
+      before do
+        deleted_user.destroy
+        get "#{base_url}/#{deleted_user_id}"
+      end
+
+      it 'return status not found' do
+        expect(last_response.status).to eq 404
+      end
+
+      it 'return error message' do
+        expect(json['error']).to eq 'Record is not exist'
+      end
+    end
   end
 
   describe 'PATCH #update' do

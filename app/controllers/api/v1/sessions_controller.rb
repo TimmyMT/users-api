@@ -11,7 +11,7 @@ module Api
 
           render json: token, status: :created
         else
-          render json: { error: 'Something went wrong. Access denied' }, status: :unauthorized
+          render json: { error: 'Something went wrong. Please try again' }, status: :unauthorized
         end
       end
 
