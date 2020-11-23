@@ -5,6 +5,50 @@ require 'rails_helper'
 RSpec.describe Api::V1::UsersController, type: :request do
   let!(:users) { create_list(:user, 4) }
   let!(:base_url) { '/api/v1/users' }
+
+  describe 'POST #create' do
+    let!(:create_params) { build(:user_sign_up_params) }
+
+    context 'guest sign up' do
+      before { post base_url, user: create_params }
+
+      it 'return status created' do
+        expect(last_response.status).to eq 201
+      end
+
+      it 'return created info' do
+        expect(json['id']).to eq User.last.id
+      end
+    end
+
+    let!(:invalid_password_params) { build(:user_params) }
+
+    context 'when inserted invalid data for sign up' do
+      before { post base_url, user: invalid_password_params }
+
+      it 'return status bad request' do
+        expect(last_response.status).to eq 400
+      end
+
+      it 'return error message' do
+        expect(json['errors']).to eq ['Invalid passwords']
+      end
+    end
+
+    context 'when inserted invalid data for sign up' do
+      before do
+        post base_url, user: { email: 'invalid email', password: '123qweQ!', password_confirmation: '123qweQ!' }
+      end
+
+      it 'return status bad request' do
+        expect(last_response.status).to eq 400
+      end
+
+      it 'return error message' do
+        expect(json['errors']).to eq ['Email is invalid', "First name can't be blank"]
+      end
+    end
+  end
   
   describe 'GET #index' do
     context 'guest can get users list' do
