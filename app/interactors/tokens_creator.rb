@@ -1,6 +1,4 @@
 class TokensCreator
-  include TokensCoder
-
   attr_reader :user
   attr_accessor :payload
 
@@ -22,6 +20,10 @@ class TokensCreator
   end
 
   private
+
+  def encode(payload)
+    JWT.encode payload, nil, 'HS256'
+  end
 
   def make_payload
     payload[:id] = user.id

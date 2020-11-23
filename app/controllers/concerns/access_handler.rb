@@ -2,7 +2,6 @@
 
 module AccessHandler
   extend ActiveSupport::Concern
-  include TokensCoder
 
   def access_authorize
     return render_unauthorized unless token_exist?
@@ -30,6 +29,10 @@ module AccessHandler
   end
 
   private
+
+  def decode(token)
+    JWT.decode token, nil, false
+  end
 
   def token_exist?
     return false if request.env["HTTP_AUTHORIZATION"].nil?

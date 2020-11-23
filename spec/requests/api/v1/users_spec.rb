@@ -101,6 +101,41 @@ RSpec.describe Api::V1::UsersController, type: :request do
       end
     end
 
+    context 'when other user tries to update user' do
+      let!(:other_user) { create(:user) }
+      let!(:user_token) { TokensCreator.new(other_user).call }
+
+      before do
+        patch "#{base_url}/#{user.id}", { user: update_params },
+        { "HTTP_AUTHORIZATION" => "Bearer #{user_token.token}" }
+      end
+
+      it 'return status unauthorized' do
+        expect(last_response.status).to eq 401
+      end
+
+      it 'return error message' do
+        expect(json['error']).to eq 'Access denied'
+      end
+    end
+
+    context 'when user tries to update self' do
+      let!(:user_token) { TokensCreator.new(user).call }
+
+      before do
+        patch "#{base_url}/#{user.id}", { user: update_params },
+        { "HTTP_AUTHORIZATION" => "Bearer #{user_token.token}" }
+      end
+
+      it 'return status unauthorized' do
+        expect(last_response.status).to eq 200
+      end
+
+      it 'return updated user info' do
+        expect(json['first_name']).to eq 'Updated name'
+      end
+    end
+
     context 'when admin tries to update user' do
       let!(:admin) { create(:user, admin: true) }
       let!(:admin_token) { TokensCreator.new(admin).call }
@@ -137,14 +172,44 @@ RSpec.describe Api::V1::UsersController, type: :request do
       end
     end
 
-    context 'when admin tries to delete user' do
-      let!(:admin_token) { TokensCreator.new(admin).call }
+    context 'when other user tries to delete user' do
+      let!(:other_user) { create(:user) }
+      let!(:user_token) { TokensCreator.new(other_user).call }
 
       before do
-        delete "#{base_url}/#{user.id}", {}, { "HTTP_AUTHORIZATION" => "Bearer #{admin_token.token}" }
+        delete "#{base_url}/#{user.id}", {}, { "HTTP_AUTHORIZATION" => "Bearer #{user_token.token}" }
       end
 
       it 'return status unauthorized' do
+        expect(last_response.status).to eq 401
+      end
+
+      it 'return error message' do
+        expect(json['error']).to eq 'Access denied'
+      end
+    end
+
+    context 'when user tries to delete self' do
+      let!(:user_token) { TokensCreator.new(user).call }
+
+      before do
+        delete "#{base_url}/#{user.id}", {}, { "HTTP_AUTHORIZATION" => "Bearer #{user_token.token}" }
+      end
+
+      it 'return status unauthorized' do
+        expect(last_response.status).to eq 401
+      end
+
+      it 'return error message' do
+        expect(json['error']).to eq 'Access denied'
+      end
+    end
+
+    context 'when admin tries to delete user' do
+      let!(:admin_token) { TokensCreator.new(admin).call }
+
+      it 'return status unauthorized' do
+        delete "#{base_url}/#{user.id}", {}, { "HTTP_AUTHORIZATION" => "Bearer #{admin_token.token}" }
         expect(last_response.status).to eq 204
       end
     end
