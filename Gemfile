@@ -15,6 +15,7 @@ gem 'rails', '~> 6.0.3', '>= 6.0.3.4'
 gem 'redis-rails'
 gem 'sidekiq', '5.0.5'
 gem 'whenever', require: false
+gem 'foreman', '~> 0.87.2'
 
 gem 'jwt'
 gem 'letter_opener', '~> 1.7.0'
