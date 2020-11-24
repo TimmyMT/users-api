@@ -11,7 +11,7 @@ RSpec.describe DailyTokenCleanJob do
     end
   end
 
-  it '4 last tokens must be expired' do
+  it 'expired tokens must be deleted' do
     expect(AccessToken.where(expired: true).count).to eq 4
     subject.perform_now
     expect(AccessToken.where(expired: true).count).to eq 0
