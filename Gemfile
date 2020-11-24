@@ -12,6 +12,9 @@ gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 4.1'
 gem 'rack-cors'
 gem 'rails', '~> 6.0.3', '>= 6.0.3.4'
+gem 'redis-rails'
+gem 'sidekiq', '5.0.5'
+gem 'whenever', require: false
 
 gem 'jwt'
 gem 'letter_opener', '~> 1.7.0'

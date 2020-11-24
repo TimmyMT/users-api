@@ -47,7 +47,7 @@ module AccessHandler
     @token = input.split(' ').last
     finded_token = AccessToken.find_by(token: @token)
 
-    if finded_token&.expires_in > DateTime.now
+    if finded_token&.expires_in > DateTime.now && finded_token&.expired != true
       receive_decoded_token
     end
   end

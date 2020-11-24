@@ -10,7 +10,10 @@ class TokensCreator
 
   def call
     user.transaction do
-      user.access_tokens.destroy_all
+      if user.access_tokens.count > 2
+        times_count = user.access_tokens.count - 2
+        times_count.times { user.access_tokens.first.destroy }
+      end
       user.access_tokens.create(
         user: user,
         token: encode(payload),
