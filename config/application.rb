@@ -26,8 +26,15 @@ module UsersApi
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
 
+    # config authoload files from folders
     config.autoload_paths << Rails.root.join('lib')
     config.autoload_paths << Rails.root.join('interactors')
+
+    # sidekiq settings
+    config.active_job.queue_adapter = :sidekiq
+    # disable redis exceptions for sidekiq
+    Redis.exists_returns_integer = false
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading

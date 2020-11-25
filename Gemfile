@@ -13,7 +13,8 @@ gem 'puma', '~> 4.1'
 gem 'rack-cors'
 gem 'rails', '~> 6.0.3', '>= 6.0.3.4'
 gem 'redis-rails'
-gem 'sidekiq', '5.0.5'
+gem 'sidekiq', '5.2.1'
+
 gem 'whenever', require: false
 gem 'foreman', '~> 0.87.2'
 
