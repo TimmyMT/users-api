@@ -30,6 +30,7 @@ $ sudo apt-get install redis-server
 #### Prepare application
 ```
 $ bundle install
+$ whenever --update-crontab
 ```
 
 ### Create database
