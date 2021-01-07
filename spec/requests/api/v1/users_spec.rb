@@ -56,7 +56,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
         get base_url
       end
 
-      it 'return response status 200' do
+      it 'return status OK' do
         expect(last_response.status).to eq 200
       end
 
@@ -145,7 +145,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
         { "HTTP_AUTHORIZATION" => "Bearer #{user_token.token}" }
       end
 
-      it 'return status unauthorized' do
+      it 'return status OK' do
         expect(last_response.status).to eq 200
       end
 
@@ -163,7 +163,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
         { "HTTP_AUTHORIZATION" => "Bearer #{admin_token.token}" }
       end
 
-      it 'return status unauthorized' do
+      it 'return status OK' do
         expect(last_response.status).to eq 200
       end
 
